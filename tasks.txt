@@ -1,0 +1,13 @@
+;general
+hey there
+add a task with "add <task_name>"
+and then try removing some with remove "remove <task_number>"
+you can also create a section to better organise your tasks and group them based on relevance with "<section_name> add <task_name>"
+if the section doesn't exist it is automatically created
+remove a section after confirming with "remove <section_name>"
+refer "help" for more info
+;projects
+todo app
+you can add some more of your projects here
+;blabla
+bla
