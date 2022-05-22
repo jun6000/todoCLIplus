@@ -36,7 +36,7 @@ namespace todo {
         // Remove empty sections
         std::fstream fw;
         fw.open(FNAME, std::fstream::out);
-        for (int i = 0; i < tasks.size(); i++) fw << tasks[i] << std::endl;
+        for (int i = 0; i < (int) tasks.size(); i++) fw << tasks[i] << std::endl;
         fw.close();
         return Ret_codes::Success;
     }
@@ -75,7 +75,7 @@ namespace todo {
     // Display methods
     Ret_codes print_array(vstr array, std::string style) {
         if (style == "bullets") for (std::string str : array) std::cout << "- " << str << std::endl;
-        else if (style == "numbers") for (int i = 0; i < array.size(); i++) std::cout << i + 1 << ". " << array[i] << std::endl;
+        else if (style == "numbers") for (int i = 0; i < (int) array.size(); i++) std::cout << i + 1 << ". " << array[i] << std::endl;
         else return Ret_codes::Inv_arg; // only bullets and numbers allowed for now
         return Ret_codes::Success;
     }
@@ -121,12 +121,12 @@ namespace todo {
 
         // Find number of sections present
         int count = 0;
-        for (int i = 0; i < tasks.size(); i++) {
+        for (int i = 0; i < (int) tasks.size(); i++) {
             if (tasks[i][0] == ';' && tasks[i] != ";general") count++;
         }
         
         // Print section names (if present)
-        for (int i = 0; i < tasks.size(); i++) {
+        for (int i = 0; i < (int) tasks.size(); i++) {
             if ((tasks[i][0] == ';') && (tasks[i] != ";general")) {
                 std::string section = tasks[i].substr(1);
                 if (count == 1) std::cout << "\u2514\u2500 ";
@@ -199,7 +199,7 @@ namespace todo {
         int section_start = SectionStart(section, tasks);
         if (section_start == -1) return 0;
         int size = 0;
-        for (int i = section_start; i < tasks.size(); i++) {
+        for (int i = section_start; i < (int) tasks.size(); i++) {
             if (tasks[i][0] == ';') break;
             if ((int) tasks[i][0] != 27) size++;
         }
@@ -321,8 +321,7 @@ namespace todo {
 
             // Place removed tasks in history
             vstr::iterator it = start;
-            advance(it, 1);
-            for (it; it != end; advance(it, 1)) history.push_back("removed (" + *it + ")");
+            for (advance(it, 1); it != end; advance(it, 1)) history.push_back("removed (" + *it + ")");
 
             // Confirm removal
             std::cout << "Do you really want to remove this section along with all its tasks? (y/N) ";
