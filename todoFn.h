@@ -32,6 +32,7 @@ namespace todo {
     std::string italicize(std::string text); // Prefixes the given text with the ANSI code for italicized text and resets it at the end, returns a copy
     std::string title(std::string text); // Returns a copy of the given text in bold enclosed in the ANSI block character \u2591
     Ret_codes strike_through(std::string &text); // Prefixes the given text with the ANSI code for striked-through text and resets it at the end
+    vstr split(std::string input); // Splits given string into an array of words
     
     // Display methods
 

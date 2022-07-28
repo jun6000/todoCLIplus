@@ -72,6 +72,18 @@ namespace todo {
         return Ret_codes::Success;
     }
 
+    vstr split(std::string input) {
+        vstr results;
+        int startIdx = 0;
+        for (int i = 0; i < input.length(); i++) {
+            if (input[i] == ' ' || i == input.length() - 1) {
+                results.push_back(input.substr(startIdx, i - startIdx + 1));
+                startIdx = i + 1;
+            }
+        }
+        return results;
+    }
+
     // Display methods
     Ret_codes print_array(vstr array, std::string style) {
         if (style == "bullets") for (std::string str : array) std::cout << "- " << str << std::endl;
@@ -187,6 +199,10 @@ namespace todo {
         return input;
     }
 
+    // Ret_codes copy(std::string input, vstr tasks) {
+    //     // split string to get src and dst values
+    // }
+    
     int SectionStart(std::string section, vstr tasks) {
         section = ";" + section;
         vstr::iterator sp = std::find(tasks.begin(), tasks.end(), section);
@@ -363,6 +379,9 @@ namespace todo {
 
         // Remove tasks
         else if (input.compare(0, 7, "remove ") == 0 || input.find(" remove ") != std::string::npos) remove(input, tasks, history, d);
+
+        // Copy a particular tasks section to another section
+        else if (input.compare(0, 3, "cp ") == 0) copy(input, tasks);
 
         // Miscellaneous
         else if (input == "help") print_help();
