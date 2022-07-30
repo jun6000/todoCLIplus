@@ -122,6 +122,7 @@ namespace todo {
         std::cout << "- Type " << italicize("remove <section name>") << " to remove an entire section of tasks from the list.\n";
         std::cout << "- Type " << italicize("<section name> remove <task number>") << " to remove a section task from the list.\n";
         std::cout << "- Type " << italicize("<section name>") << " to view the tasks of a particular section.\n";
+        std::cout << "- Type " << italicize("cp <src section name> <dest section name>") << " to copy all tasks of the src section and append it to the dest section.\n";
         std::cout << "- Type " << italicize("history") << " to view commands used in current session.\n";
         std::cout << "- Type " << italicize("exit") << " to save and exit.\n";
         std::cout << "\nEnd of help.\nPress ENTER to go back..";
@@ -263,7 +264,7 @@ namespace todo {
                 }
                 else {
                     while (getchar() != '\n'); // Flushes stdin buffer
-                    InvalidArgs(); // TODO: doesn't activate for invalid option
+                    InvalidArgs();
                 }
             }
             return Ret_codes::Success;
@@ -348,7 +349,10 @@ namespace todo {
                 tasks.erase(start, end);
                 d.disp_sec = false;
             }
-            else InvalidArgs();
+            else {
+                while (getchar() != '\n');
+                InvalidArgs();
+            }
         }
         else { // Remove single task
             if ((task_no > section_size) || (task_no <= 0)) InvalidArgs();
@@ -371,27 +375,43 @@ namespace todo {
         return Ret_codes::Success;
     }
 
-    // Ret_codes copy_section(std::string input, vstr &tasks) {
-    //     vstr split_input = split(input); // Split input string to get arguments
-    //     if (split_input.size() != 3 || SectionStart(split_input[1], tasks) == -1) {
-    //         InvalidArgs();
-    //         return Ret_codes::Inv_arg;
-    //     }
+    Ret_codes copy_section(std::string input, vstr &tasks) {
+        vstr split_input = split(input); // Split input string to get arguments
+        if (split_input.size() != 3 || SectionStart(split_input[1], tasks) == -1) {
+            InvalidArgs();
+            return Ret_codes::Inv_arg;
+        }
 
-    //     std::string src = split_input[1], dest = split_input[2];
-    //     if (SectionStart(dest, tasks) == -1) { // If destination section doesn't exist, create
-    //         std::cout << "Specified section to copy to does not exist. Would you like to create a new one? (y/N) ";
-    //         char c = getchar();
-    //         if (c == '\n' || c == 'n' || c == 'N') return Ret_codes::Success;
-    //         else if (c == 'y' || c == 'Y') tasks.push_back(";" + dest);
-    //         else {
-    //             while (getchar() != '\n');
-    //             InvalidArgs();
-    //         }
-    //     }
+        std::string src = split_input[1], dest = split_input[2];
+        if (SectionStart(dest, tasks) == -1) { // If destination section doesn't exist, create
+            std::cout << "Specified section to copy to does not exist. Would you like to create a new one? (y/N) ";
+            char c = getchar();
+            if (c == '\n' || c == 'n' || c == 'N') return Ret_codes::Success;
+            else if (c == 'y' || c == 'Y') tasks.push_back(";" + dest);
+            else {
+                while (getchar() != '\n');
+                InvalidArgs();
+                return Ret_codes::Inv_arg;
+            }
+        }
 
-    //     return Ret_codes::Success;
-    // }
+        // Copy tasks from src
+        vstr tasks_copy;
+        int src_start = SectionStart(src, tasks), src_size = SectionSize(src, tasks);
+        for (int i = src_start; i < src_start + src_size; i++) tasks_copy.push_back(tasks[i]);
+
+        // Insert tasks into destination
+        int dest_start = SectionStart(dest, tasks);
+        vstr::iterator sp = tasks.begin();
+        std::advance(sp, dest_start + SectionSize(dest, tasks));
+        for (std::string task : tasks_copy) {
+            tasks.insert(sp, task);
+            sp = tasks.begin(); // Reset iterator and find next position to insert to
+            std::advance(sp, dest_start + SectionSize(dest, tasks));
+        }
+
+        return Ret_codes::Success;
+    }
     
     Ret_codes handle_input(std::string &input, vstr &tasks, vstr &history, DisplayMode &d) {
         // Add relevant user inputs to history
@@ -403,8 +423,8 @@ namespace todo {
         // Remove tasks
         else if (input.compare(0, 7, "remove ") == 0 || input.find(" remove ") != std::string::npos) remove(input, tasks, history, d);
 
-        // // Copy a particular tasks section to another section
-        // else if (input.compare(0, 3, "cp ") == 0) copy_section(input, tasks);
+        // Copy a particular tasks section to another section
+        else if (input.compare(0, 3, "cp ") == 0) copy_section(input, tasks);
 
         // Miscellaneous
         else if (input == "help") print_help();
