@@ -75,12 +75,12 @@ namespace todo {
     vstr split(std::string input) {
         vstr results;
         int startIdx = 0;
-        for (int i = 0; i < input.length(); i++) {
+        for (int i = 0; i < (int) input.length(); i++) {
             if (input[i] == ' ') {
                 results.push_back(input.substr(startIdx, i - startIdx));
                 startIdx = i + 1;
             }
-            else if (i == input.length() - 1) results.push_back(input.substr(startIdx, i - startIdx + 1));
+            else if (i == (int) input.length() - 1) results.push_back(input.substr(startIdx, i - startIdx + 1));
         }
         return results;
     }
