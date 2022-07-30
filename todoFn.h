@@ -54,6 +54,7 @@ namespace todo {
     int SectionSize(std::string section, vstr tasks); // Finds number of tasks in a given section
     Ret_codes add(std::string &input, vstr &tasks, DisplayMode &d); // Adds task
     Ret_codes remove(std::string &input, vstr &tasks, vstr &history, DisplayMode &d); // Removes task(s)
+    Ret_codes copy_section(std::string input, vstr &tasks); // Copies tasks from section to another
     Ret_codes handle_input(std::string &input, vstr &tasks, vstr &history, DisplayMode &d); // Parses user input
 
 }

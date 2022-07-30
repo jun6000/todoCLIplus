@@ -9,7 +9,7 @@ int main(int argc, char const *argv[]) {
     vstr tasks = copy_tasks(fr);
 
     // Start interactive loop
-    DisplayMode d = {.disp_sec = false, .section = "general"}; // Display-status variable (show default / section tasks)
+    DisplayMode d = { .disp_sec = false, .section = "general" }; // Display-status variable (show default / section tasks)
     vstr history;
     std::string input;
 

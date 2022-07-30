@@ -76,10 +76,11 @@ namespace todo {
         vstr results;
         int startIdx = 0;
         for (int i = 0; i < input.length(); i++) {
-            if (input[i] == ' ' || i == input.length() - 1) {
-                results.push_back(input.substr(startIdx, i - startIdx + 1));
+            if (input[i] == ' ') {
+                results.push_back(input.substr(startIdx, i - startIdx));
                 startIdx = i + 1;
             }
+            else if (i == input.length() - 1) results.push_back(input.substr(startIdx, i - startIdx + 1));
         }
         return results;
     }
@@ -198,10 +199,6 @@ namespace todo {
         std::getline(std::cin, input);
         return input;
     }
-
-    // Ret_codes copy(std::string input, vstr tasks) {
-    //     // split string to get src and dst values
-    // }
     
     int SectionStart(std::string section, vstr tasks) {
         section = ";" + section;
@@ -264,8 +261,12 @@ namespace todo {
                     tasks.push_back(";" + section);
                     tasks.push_back(task);
                 }
-                else InvalidArgs();
+                else {
+                    while (getchar() != '\n'); // Flushes stdin buffer
+                    InvalidArgs(); // TODO: doesn't activate for invalid option
+                }
             }
+            return Ret_codes::Success;
         }
         else {
             vstr::iterator sp = tasks.begin();
@@ -370,6 +371,28 @@ namespace todo {
         return Ret_codes::Success;
     }
 
+    // Ret_codes copy_section(std::string input, vstr &tasks) {
+    //     vstr split_input = split(input); // Split input string to get arguments
+    //     if (split_input.size() != 3 || SectionStart(split_input[1], tasks) == -1) {
+    //         InvalidArgs();
+    //         return Ret_codes::Inv_arg;
+    //     }
+
+    //     std::string src = split_input[1], dest = split_input[2];
+    //     if (SectionStart(dest, tasks) == -1) { // If destination section doesn't exist, create
+    //         std::cout << "Specified section to copy to does not exist. Would you like to create a new one? (y/N) ";
+    //         char c = getchar();
+    //         if (c == '\n' || c == 'n' || c == 'N') return Ret_codes::Success;
+    //         else if (c == 'y' || c == 'Y') tasks.push_back(";" + dest);
+    //         else {
+    //             while (getchar() != '\n');
+    //             InvalidArgs();
+    //         }
+    //     }
+
+    //     return Ret_codes::Success;
+    // }
+    
     Ret_codes handle_input(std::string &input, vstr &tasks, vstr &history, DisplayMode &d) {
         // Add relevant user inputs to history
         if (input != "history" && input != "\0" && input != "help") history.push_back(input);
@@ -380,8 +403,8 @@ namespace todo {
         // Remove tasks
         else if (input.compare(0, 7, "remove ") == 0 || input.find(" remove ") != std::string::npos) remove(input, tasks, history, d);
 
-        // Copy a particular tasks section to another section
-        else if (input.compare(0, 3, "cp ") == 0) copy(input, tasks);
+        // // Copy a particular tasks section to another section
+        // else if (input.compare(0, 3, "cp ") == 0) copy_section(input, tasks);
 
         // Miscellaneous
         else if (input == "help") print_help();
