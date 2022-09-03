@@ -20,7 +20,10 @@ int main(int argc, char const *argv[]) {
         input = get_input(); // Store user input
 
         // Input analysis
-        if (input.compare("exit") == 0) break; // Exit loop
+        if (input.compare("exit") == 0) {
+            clear(); // Clear terminal screen
+            break; // Exit loop
+        }
         handle_input(input, tasks, history, d); // Parse command from user
     }
 
